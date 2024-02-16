@@ -2347,6 +2347,34 @@ String Node::get_scene_file_path() const {
 	return data.scene_file_path;
 }
 
+
+// XUMES
+void Node::set_testing_state_string(const String &p_state) {
+	ERR_THREAD_GUARD
+	if (data.testing_state_string == p_state) {
+		return;
+	}
+
+	data.testing_state_string = p_state;
+
+	data.testing_state = p_state.split(",");
+	// we don't check here if the attribute exists because they are put at runtime.
+}
+
+String Node::get_testing_state_string() const {
+	return data.testing_state_string;
+}
+
+Vector<String> Node::get_testing_state() const {
+	return data.testing_state;
+}
+
+void Node::send_input(const Ref<InputEvent> &p_event) {
+	_call_input(p_event);
+}
+// END XUMES
+
+
 void Node::set_editor_description(const String &p_editor_description) {
 	ERR_THREAD_GUARD
 	if (data.editor_description == p_editor_description) {
@@ -3439,6 +3467,11 @@ void Node::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_editor_description", "editor_description"), &Node::set_editor_description);
 	ClassDB::bind_method(D_METHOD("get_editor_description"), &Node::get_editor_description);
 
+	// XUMES
+	ClassDB::bind_method(D_METHOD("set_testing_state", "state"), &Node::set_testing_state_string);
+	ClassDB::bind_method(D_METHOD("get_testing_state"), &Node::get_testing_state_string);
+	// END XUMES
+
 	ClassDB::bind_method(D_METHOD("_set_import_path", "import_path"), &Node::set_import_path);
 	ClassDB::bind_method(D_METHOD("_get_import_path"), &Node::get_import_path);
 
@@ -3584,6 +3617,11 @@ void Node::_bind_methods() {
 
 	ADD_GROUP("Editor Description", "editor_");
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "editor_description", PROPERTY_HINT_MULTILINE_TEXT), "set_editor_description", "get_editor_description");
+
+	// XUMES
+	ADD_GROUP("Testing", "testing_");
+	ADD_PROPERTY(PropertyInfo(Variant::STRING, "testing_state", PROPERTY_HINT_MULTILINE_TEXT), "set_testing_state", "get_testing_state");
+	// END XUMES
 
 	GDVIRTUAL_BIND(_process, "delta");
 	GDVIRTUAL_BIND(_physics_process, "delta");

@@ -170,6 +170,12 @@ private:
 #ifdef TOOLS_ENABLED
 		NodePath import_path; // Path used when imported, used by scene editors to keep tracking.
 #endif
+
+		// XUMES
+		Vector<String> testing_state;
+		String testing_state_string;
+		// END XUMES
+
 		String editor_description;
 
 		Viewport *viewport = nullptr;
@@ -328,6 +334,14 @@ protected:
 	GDVIRTUAL1(_unhandled_key_input, Ref<InputEvent>)
 
 public:
+
+	// XUMES
+	void set_testing_state_string(const String &p_state);
+	String get_testing_state_string() const;
+	Vector<String> get_testing_state() const;
+	void send_input(const Ref<InputEvent> &p_event);
+	//END XUMES
+
 	enum {
 		// you can make your own, but don't use the same numbers as other notifications in other nodes
 		NOTIFICATION_ENTER_TREE = 10,

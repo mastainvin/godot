@@ -372,3 +372,4 @@ $RECYCLE.BIN/
 *.msp
 *.lnk
 *.generated.props
+/CMakeLists.txt
