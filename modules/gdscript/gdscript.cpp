@@ -1747,7 +1747,6 @@ void GDScriptInstance::validate_property(PropertyInfo &p_property) const {
 
 void GDScriptInstance::get_property_list(List<PropertyInfo> *p_properties) const {
 	// exported members, not done yet!
-
 	const GDScript *sptr = script.ptr();
 	List<PropertyInfo> props;
 

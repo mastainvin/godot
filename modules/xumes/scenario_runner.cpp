@@ -20,7 +20,7 @@ ScenarioRunner::Status ScenarioRunner::get_status() const {
 int64_t ScenarioRunner::run(const String &p_scene) {
 	List<String> args;
 
-	args.push_back("--headless");
+	//args.push_back("--headless");
 
 	args.push_back(p_scene);
 
@@ -36,7 +36,7 @@ int64_t ScenarioRunner::run(const String &p_scene) {
 	}
 
 	int64_t pid = 0;
-	Error err = OS::get_singleton()->create_instance(instance_args, &pid);
+	Error err = OS::get_singleton()->create_process(OS::get_singleton()->get_executable_path(), instance_args, &pid, true);
 	ERR_FAIL_COND_V(err, err);
 	if (pid != 0) {
 		pids.push_back(pid);

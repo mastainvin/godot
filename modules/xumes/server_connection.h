@@ -36,9 +36,9 @@ public:
 
 	bool wait_connection();
 	Dictionary get(bool &r);
-	bool post(Dictionary &data);
-
-
+	bool post_dict(const Dictionary &data);
+	bool post_int(int response);
+	bool post_variant(const Variant &variant);
 
 	bool is_connected() {return connected;}
 

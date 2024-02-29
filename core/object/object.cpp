@@ -221,6 +221,7 @@ void Object::_get_valid_parents_static(List<String> *p_parents) {
 }
 
 void Object::set(const StringName &p_name, const Variant &p_value, bool *r_valid) {
+	// print_line(p_name, p_value); peut-être ici qu'on peut récupérer la modification de l'état
 #ifdef TOOLS_ENABLED
 
 	_edited = true;

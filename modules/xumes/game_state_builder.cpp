@@ -12,6 +12,8 @@ bool GameStateBuilderDefault::get_game_state(const Node *p_node, Dictionary *p_s
 
 	bool has_properties = testing_state.size() > 0;
 
+	p_state->operator[]("__type__") = p_node->get_name();
+
 	for(auto str : testing_state) {
 		bool r_valid;
 		Variant property = p_node->get(str, &r_valid);

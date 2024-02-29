@@ -12,6 +12,7 @@
 #include "input_handler.h"
 #include "scenario_runner.h"
 #include "server_connection.h"
+#include "assertion.h"
 
 class GameStateBuilderInterface;
 class TestHandler;
@@ -30,6 +31,10 @@ class FeatureNode : public Node {
 
 private:
 	double time_passed;
+	double speed = 1.0;
+
+	Array inputs;
+	Array assertions;
 
 	String given_str;
 	String when_str;
@@ -39,17 +44,22 @@ private:
 	Dictionary when_args;
 	Dictionary then_args;
 
-	const String RESET = "reset";
-	const String START = "start";
-	const String STOP = "stop";
-
+	const String GIVEN = "given";
+	const String WHEN = "when";
+	const String THEN = "then";
+	const String RUN = "run";
+	const String STOP = "finished";
+	const String GET_STATE = "get_state";
+	const String GET_STEPS = "get_steps";
+	const String ACTION = "action";
+	const String ARGS = "args";
 	int64_t pid;
 
 protected:
 	static void _bind_methods();
 	void process();
 	void push_game_state();
-	void handle_notification(String &notification);
+	void handle_notification(String &notification, const Dictionary &event);
 	void handle_get();
 	void handle_get_args();
 
@@ -58,8 +68,15 @@ protected:
 public:
 	void _notification(int p_notification);
 
-	void reset();
+	void handle_actions(const Dictionary &event);
+	void handle_args(const Dictionary &event);
 
+	void given();
+	void when();
+	void then();
+
+	void pause_children();
+	void unpause_children();
 
 	void set_testing_given_str(const String &str);
 	String get_testing_given_str() const;
@@ -69,6 +86,15 @@ public:
 
 	void set_testing_then_str(const String &str);
 	String get_testing_then_str() const;
+
+	void set_testing_speed(const double s);
+	double get_testing_speed() const;
+
+	// Behavior-driven Development
+	void push_steps();
+
+	// Assertion methods
+	void assert_equal(const Variant &actual, const Variant &expected);
 
 	FeatureNode();
 	~FeatureNode();
