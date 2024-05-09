@@ -6,7 +6,7 @@
 
 #include "server_connection.h"
 
-
+std::map<__pid_t, ServerConnection*> ServerConnection::serverConnections;
 
 bool ServerConnection::init_socket(uint16_t port) {
 
@@ -75,6 +75,7 @@ bool ServerConnection::wait_connection() {
 
 
 void ServerConnection::stop_socket() {
+	print_line("stopping socket");
 	close(server_fd);
 	close(new_socket);
 	connected = false;

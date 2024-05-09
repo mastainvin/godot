@@ -12,34 +12,34 @@
 #include "main/main.h"
 #include "servers/display_server.h"
 
+
+
+
 ScenarioRunner::Status ScenarioRunner::get_status() const {
 	return status;
 }
 
 
-int64_t ScenarioRunner::run(const String &p_scene) {
+int64_t ScenarioRunner::run(const String &p_scene, OS::ProcessID  *r_pid) {
+
 	List<String> args;
 
-	//args.push_back("--headless");
+	// args.push_back("--headless");
 
-	args.push_back(p_scene);
+	if (!p_scene.is_empty()) {
+		args.push_back("res://Tests/PipeSizeTest/PipeSizeTest.tscn");
+	}
 
-	String exec = OS::get_singleton()->get_executable_path();
 	List<String> instance_args(args);
 	RunInstancesDialog::get_singleton()->get_argument_list_for_instance(0, instance_args);
 
-	if (OS::get_singleton()->is_stdout_verbose()) {
-		print_line(vformat("Running: %s", exec));
-		for (const String &E : instance_args) {
-			print_line(" %s", E);
-		}
-	}
+	Error err = OS::get_singleton()->create_instance(instance_args, r_pid);
+	//Error err = OS::get_singleton()->create_process(OS::get_singleton()->get_executable_path(), args, &pid, true);
 
-	int64_t pid = 0;
-	Error err = OS::get_singleton()->create_process(OS::get_singleton()->get_executable_path(), instance_args, &pid, true);
 	ERR_FAIL_COND_V(err, err);
-	if (pid != 0) {
-		pids.push_back(pid);
+
+	if (r_pid != 0) {
+		pids.push_back(*r_pid);
 	}
 
 	status = STATUS_PLAY;
@@ -48,10 +48,10 @@ int64_t ScenarioRunner::run(const String &p_scene) {
 }
 
 
-uint16_t ScenarioRunner::get_port(){
-	previous_port++;
-	return previous_port;
+uint16_t ScenarioRunner::get_port(OS::ProcessID &pid){
+	return 1024 + pid % (65535 - 1024 + 1);
 }
+
 
 
 void ScenarioRunner::stop() {

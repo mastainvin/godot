@@ -1,5 +1,5 @@
 //
-// Created by vincent on 15/02/24.
+// Created by vincent on 08/05/24.
 //
 
 #ifndef GODOT_XUMES_COMMUNICATION_H
@@ -7,69 +7,46 @@
 
 
 #include <iostream>
-#include <cstring>
-#include <unistd.h>
-#include <arpa/inet.h>
-#include <sys/socket.h>
-
-#define PORT 8080
+#include <memory>
+#include <string>
 
 #include "scene/main/node.h"
 
 #include "core/object/object.h"
-#include "core/os/thread.h"
-#include "core/os/mutex.h"
-
-#include "core/string/print_string.h"
-#include "core/io/json.h"
-
 #include "scenario_runner.h"
 
-class XumesCommunication : public Object {
-	GDCLASS(XumesCommunication, Object);
+#define CPPHTTPLIB_NO_EXCEPTIONS
 
-	static XumesCommunication *singleton;
-	static void thread_func(void *p_udata);
+#include <iostream>
+#include "httplib.h"
+#include <cstdlib> // Pour utiliser la fonction std::rand() pour générer un port aléatoire
+
+class GameServiceImpl {
+public:
+	GameServiceImpl() : server_() {
+		server_.Get(R"(/start_scenario/(\w+))", [&](const httplib::Request& req, httplib::Response& res) {
+			const char*  name = req.matches[1].str().c_str();
+
+			String scenario_name = String(name);
+
+			OS::ProcessID pid = 0;
+			ScenarioRunner::get_instance()->run(scenario_name, &pid);
+
+			uint16_t port = ScenarioRunner::get_instance()->get_port(pid);
+
+			res.set_content(std::to_string(port), "text/plain");
+		});
+	}
+
+	void run(int port) {
+		server_.listen("localhost", port);
+		print_line("HTTP Server started on ", port);
+	}
 
 private:
-	bool thread_exited;
-	mutable bool exit_thread;
-
-	Thread *thread;
-	Mutex *mutex;
-
-	bool started = false;
-
-	int server_fd, new_socket, valread;
-	struct sockaddr_in address;
-	int opt = 1;
-	int addrlen = sizeof(address);
-	char buffer[1024] = {0};
-
-	JSON json = JSON();
-
-	bool wait_connection();
-	void disconnection();
-	void stop_socket();
-	bool init_socket();
-	Dictionary wait_call();
-	bool push_info(Dictionary &data);
-
-
-public:
-	static XumesCommunication *get_singleton();
-
-	Error init();
-	void lock();
-	void unlock();
-	void finish();
-
-protected:
-	static void _bind_methods();
-
-public:
-
-	XumesCommunication();
+	httplib::Server server_;
 };
+
+
 
 #endif //GODOT_XUMES_COMMUNICATION_H

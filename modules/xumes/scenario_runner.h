@@ -5,6 +5,9 @@
 #ifndef GODOT_SCENARIO_RUNNER_H
 #define GODOT_SCENARIO_RUNNER_H
 
+#include <map>
+#include <unistd.h>
+#include <iostream>
 
 #include "core/os/os.h"
 
@@ -21,7 +24,6 @@ public:
 
 	List<OS::ProcessID> pids;
 
-	uint16_t previous_port = 8080;
 
 private:
 	Status status;
@@ -31,10 +33,10 @@ private:
 public:
 	Status get_status() const;
 
-	int64_t run(const String &p_scene);
+	int64_t run(const String &p_scene, OS::ProcessID  *r_pid);
 	void stop();
 
-	uint16_t get_port();
+	uint16_t get_port(OS::ProcessID &pid);
 
 	static ScenarioRunner* get_instance();
 
