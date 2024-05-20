@@ -11,7 +11,6 @@
 #include "editor/run_instances_dialog.h"
 
 
-
 void FeatureNode::_notification(int p_notification) {
 
 	switch(p_notification) {
@@ -26,6 +25,7 @@ void FeatureNode::_notification(int p_notification) {
 				server_connection->init_socket(port);
 				Engine::get_singleton()->set_time_scale(speed);
 				DisplayServer::get_singleton()->window_set_vsync_mode(DisplayServer::VSYNC_DISABLED);
+
 				pause_children();
 			}
 		} break;
@@ -36,12 +36,18 @@ void FeatureNode::_notification(int p_notification) {
 
 void FeatureNode::process() {
 	if (get_tree()->get_current_scene() == this) {
-		if (!server_connection->is_connected()) {
+		if (!server_connection->is_connected() && !already_connected) {
 			server_connection->wait_connection();
+			already_connected = true;
+		} else if(!server_connection->is_connected() && already_connected) {
+			exit(EXIT_FAILURE);
+		}
+
+		if (!server_connection->is_connected()) {
+			exit(EXIT_FAILURE);
 		}
 
 		handle_get();
-
 	} else {
 		if (server_connection->is_connected()) {
 			server_connection->stop_socket();
@@ -74,19 +80,23 @@ void FeatureNode::handle_get() {
 
 void FeatureNode::handle_notification(String &notification, const Dictionary &event) {
 	if (notification == FeatureNode::ACTION) {
+		handle_methods(event);
 		handle_actions(event);
 	} else if (notification == FeatureNode::STOP) {
 		server_connection->post_int(1);
-		exit(EXIT_SUCCESS);
+		get_tree()->quit(EXIT_SUCCESS);
 	} else if (notification == FeatureNode::RUN) {
 		server_connection->post_int(1);
 	} else if (notification == FeatureNode::RESET) {
 		reset();
-		server_connection->post_int(1);
 
+		// handle_methods(event);
+		server_connection->post_int(1);
 	} else if (notification == FeatureNode::GET_STATE) {
 		push_game_state();
 	}
+
+
 
 }
 
@@ -99,12 +109,43 @@ void FeatureNode::handle_actions(const Dictionary &event) {
 		if (event["inputs"].is_array()) {
 			inputs = static_cast<Array>(event["inputs"]);
 			unpause_children();
+
 			input_handler.handle(get_viewport(), inputs);
 			push_game_state();
 		}
 	} else {
 		pause_children();
 	}
+
+
+}
+
+Error FeatureNode::handle_methods(const Dictionary &event) {
+	if (event.has("methods")) {
+		if (event["methods"].is_array()) {
+			Array methods = static_cast<Array>(event["methods"]);
+			for (int i = 0; i < methods.size(); i++) {
+				Dictionary method = methods.get(i);
+
+				if (!method.has("function_name") || !method.has("parameters")) {
+					return Error::FAILED;
+				}
+
+				String method_name = method["function_name"];
+
+				Dictionary parameters = method["parameters"];
+
+				if (!parameters.has("args")) {
+					return Error::FAILED;
+				}
+
+				Array args = parameters["args"];
+
+				callv(method_name, args);
+			}
+		}
+	}
+	return Error::OK;
 }
 
 void FeatureNode::pause_children() {
@@ -133,7 +174,7 @@ double FeatureNode::get_testing_speed() const {
 }
 
 
-FeatureNode::FeatureNode() : game_state_builder(new GameStateBuilderDefault()), input_handler(InputHandler()){
+FeatureNode::FeatureNode() : game_state_builder(new GameStateBuilderDefault()), input_handler(InputHandler()) {
 	if (ServerConnection::is_saved()) {
 		server_connection = ServerConnection::load();
 	} else {

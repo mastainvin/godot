@@ -64,7 +64,6 @@ void XumesCommunicationThread::finish() {
 	}
 
 	exit_thread = true;
-	//thread->wait_to_finish();
 
 	memdelete(thread);
 

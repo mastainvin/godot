@@ -14,8 +14,6 @@
 #include "server_connection.h"
 
 class GameStateBuilderInterface;
-class TestHandler;
-
 
 class FeatureNode : public Node {
 	GDCLASS(FeatureNode, Node);
@@ -30,13 +28,16 @@ private:
 	Array inputs;
 	Array assertions;
 
+	bool already_connected = false;
+
 	const String RUN = "run";
-	const String STOP = "finished";
+	const String STOP = "stop";
 	const String GET_STATE = "get_state";
 	const String GET_STEPS = "get_steps";
 	const String ACTION = "action";
 	const String ARGS = "args";
 	const String RESET = "reset";
+	const String METHODS = "methods";
 
 protected:
 	static void _bind_methods();
@@ -53,6 +54,7 @@ public:
 
 	void handle_actions(const Dictionary &event);
 	void handle_args(const Dictionary &event);
+	Error handle_methods(const Dictionary &event);
 
 	void pause_children();
 	void unpause_children();

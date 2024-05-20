@@ -27,7 +27,7 @@ int64_t ScenarioRunner::run(const String &p_scene, OS::ProcessID  *r_pid) {
 	// args.push_back("--headless");
 
 	if (!p_scene.is_empty()) {
-		args.push_back("res://Tests/PipeSizeTest/PipeSizeTest.tscn");
+		args.push_back(p_scene);
 	}
 
 	List<String> instance_args(args);
