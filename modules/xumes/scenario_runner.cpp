@@ -20,11 +20,19 @@ ScenarioRunner::Status ScenarioRunner::get_status() const {
 }
 
 
-int64_t ScenarioRunner::run(const String &p_scene, OS::ProcessID  *r_pid) {
+int64_t ScenarioRunner::run(const String &p_scene, int fps_limit, bool headless, OS::ProcessID  *r_pid) {
 
 	List<String> args;
 
-	// args.push_back("--headless");
+	if (headless) {
+		args.push_back("--headless");
+		args.push_back("--disable-vsync");
+	}
+
+	if (fps_limit > 0) {
+		args.push_back("--fixed-fps");
+		args.push_back(String(std::to_string(fps_limit).c_str()));
+	}
 
 	if (!p_scene.is_empty()) {
 		args.push_back(p_scene);

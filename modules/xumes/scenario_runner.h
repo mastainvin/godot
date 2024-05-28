@@ -33,7 +33,7 @@ private:
 public:
 	Status get_status() const;
 
-	int64_t run(const String &p_scene, OS::ProcessID  *r_pid);
+	int64_t run(const String &p_scene, int fps_limit, bool headless, OS::ProcessID  *r_pid);
 	void stop();
 
 	uint16_t get_port(OS::ProcessID &pid);
