@@ -123,7 +123,7 @@ public:
 	}
 
 	void run(int port) {
-		server_.listen("localhost", port);
+		server_.listen("0.0.0.0", port);
 		print_line("HTTP Server started on ", port);
 	}
 
