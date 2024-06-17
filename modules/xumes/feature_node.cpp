@@ -84,7 +84,7 @@ void FeatureNode::handle_notification(String &notification, const Dictionary &ev
 		handle_actions(event);
 	} else if (notification == FeatureNode::STOP) {
 		server_connection->post_int(1);
-		get_tree()->quit(EXIT_SUCCESS);
+		get_tree()->quit();
 	} else if (notification == FeatureNode::RUN) {
 		server_connection->post_int(1);
 	} else if (notification == FeatureNode::RESET) {
