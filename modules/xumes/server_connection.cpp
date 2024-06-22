@@ -11,7 +11,7 @@
 #include <arpa/inet.h>
 #include "server_connection.h"
 
-std::map<__pid_t, ServerConnection*> ServerConnection::serverConnections;
+std::map<pid_t, ServerConnection*> ServerConnection::serverConnections;
 
 bool ServerConnection::init_socket(uint16_t port) {
 
@@ -22,10 +22,19 @@ bool ServerConnection::init_socket(uint16_t port) {
 	}
 
 	int opt = 1;
-	if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt))) {
-		perror("setsockopt");
+	// Set SO_REUSEADDR option
+	if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt))) {
+		perror("setsockopt SO_REUSEADDR");
 		exit(EXIT_FAILURE);
 	}
+
+	// set SO_REUSEPORT if available
+#ifdef SO_REUSEPORT
+	if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt))) {
+		perror("setsockopt SO_REUSEPORT");
+		exit(EXIT_FAILURE);
+	}
+#endif
 
 	struct timeval timeout;
 	timeout.tv_sec = 10;  // Set the timeout to 10 seconds

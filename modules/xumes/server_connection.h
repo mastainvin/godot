@@ -17,7 +17,7 @@
 #include "core/io/json.h"
 
 class ServerConnection {
-	static std::map<__pid_t, ServerConnection*> serverConnections;
+	static std::map<pid_t, ServerConnection*> serverConnections;
 
 private:
 	bool connected = false;
