@@ -37,7 +37,7 @@ private:
 	struct sockaddr_in address;
 	int opt = 1;
 	int addrlen = sizeof(address);
-	char buffer[1024] = {0};
+	char buffer[4096] = {0};
 
 	JSON json = JSON();
 

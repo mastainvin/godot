@@ -11,12 +11,11 @@
 #include "scene/main/viewport.h"
 #include "core/variant/array.h"
 #include "core/input/input_event.h"
+#include "core/input/input.h"
 
 #include "translator.h"
 #include "event_factory.h"
 #include "input_data.h"
-
-
 
 class InputHandler {
 
@@ -26,7 +25,7 @@ private:
 
 public:
 	void handle(Viewport *viewport, Array &inputs);
-
+	void flush(Viewport *viewport);
 
 };
 

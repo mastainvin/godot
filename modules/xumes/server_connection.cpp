@@ -21,7 +21,7 @@ bool ServerConnection::init_socket(uint16_t port) {
 		exit(EXIT_FAILURE);
 	}
 
-	int opt = 1;
+	/*int opt = 1;*/
 	// Set SO_REUSEADDR option
 	if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt))) {
 		perror("setsockopt SO_REUSEADDR");
@@ -36,7 +36,7 @@ bool ServerConnection::init_socket(uint16_t port) {
 	}
 #endif
 
-	struct timeval timeout;
+/*	struct timeval timeout;
 	timeout.tv_sec = 10;  // Set the timeout to 10 seconds
 	timeout.tv_usec = 0;
 
@@ -48,7 +48,7 @@ bool ServerConnection::init_socket(uint16_t port) {
 	if (setsockopt(server_fd, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout))) {
 		perror("setsockopt");
 		exit(EXIT_FAILURE);
-	}
+	}*/
 
 	address.sin_family = AF_INET;
 	address.sin_addr.s_addr = INADDR_ANY;
@@ -72,7 +72,7 @@ bool ServerConnection::wait_connection() {
 		return false;
 	}
 
-	struct timeval timeout;
+/*	struct timeval timeout;
 	timeout.tv_sec = 10;  // Set the timeout to 10 seconds
 	timeout.tv_usec = 0;
 
@@ -84,7 +84,7 @@ bool ServerConnection::wait_connection() {
 	if (setsockopt(new_socket, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout))) {
 		perror("setsockopt");
 		exit(EXIT_FAILURE);
-	}
+	}*/
 
 	connected = true;
 	return true;

@@ -101,6 +101,7 @@ void FeatureNode::handle_notification(String &notification, const Dictionary &ev
 }
 
 void FeatureNode::reset() {
+	input_handler.flush(get_viewport());
 	SceneTree::get_singleton()->reload_current_scene();
 }
 
