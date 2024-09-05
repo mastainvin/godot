@@ -24,7 +24,7 @@ void FeatureNode::_notification(int p_notification) {
 				uint16_t port = ScenarioRunner::get_instance()->get_port(pid);
 				server_connection->init_socket(port);
 				Engine::get_singleton()->set_time_scale(speed);
-				DisplayServer::get_singleton()->window_set_vsync_mode(DisplayServer::VSYNC_DISABLED);
+				// DisplayServer::get_singleton()->window_set_vsync_mode(DisplayServer::VSYNC_DISABLED);
 
 				pause_children();
 			}
@@ -152,7 +152,8 @@ Error FeatureNode::handle_methods(const Dictionary &event) {
 void FeatureNode::pause_children() {
 	for (int i = 0; i < get_child_count(); i++){
 		Node* child = get_child(i);
-		child->set_process_mode(Node::PROCESS_MODE_DISABLED);
+		child->call_deferred("set_process_mode", Node::PROCESS_MODE_DISABLED);
+//		child->set_process_mode(Node::PROCESS_MODE_DISABLED);
 	}
 }
 
@@ -160,7 +161,8 @@ void FeatureNode::pause_children() {
 void FeatureNode::unpause_children() {
 	for (int i = 0; i < get_child_count(); i++){
 		Node* child = get_child(i);
-		child->set_process_mode(Node::PROCESS_MODE_INHERIT);
+		child->call_deferred("set_process_mode", Node::PROCESS_MODE_INHERIT);
+//		child->set_process_mode(Node::PROCESS_MODE_INHERIT);
 	}
 }
 
